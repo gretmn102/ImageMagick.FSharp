@@ -43,7 +43,7 @@ type ConvertFolderOptions = {
     OutputFormat: string
 }
 
-let convertFolderToWebp (options: ConvertFolderOptions) dirPath =
+let convertFolder (options: ConvertFolderOptions) dirPath =
     let dir = DirectoryInfo dirPath
     let files =
         dir.GetFiles "*.*"
