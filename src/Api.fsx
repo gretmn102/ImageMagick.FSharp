@@ -38,7 +38,7 @@ type ConvertFolderOptions = {
     FitSize: Size option
     Dry: bool
     /// `(=) ".png"` for example
-    Formats: string -> bool
+    InputFormats: string -> bool
     OutputDirectory: string option
 }
 
@@ -47,7 +47,7 @@ let convertFolderToWebp (options: ConvertFolderOptions) dirPath =
     let files =
         dir.GetFiles "*.*"
         |> Array.filter (fun path ->
-            options.Formats path.Extension
+            options.InputFormats path.Extension
         )
 
     let outputDirectory =
