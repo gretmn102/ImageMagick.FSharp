@@ -39,6 +39,7 @@ type ConvertFolderOptions = {
     Dry: bool
     /// `(=) ".png"` for example
     Formats: string -> bool
+    OutputDirectory: string option
 }
 
 let convertFolderToWebp (options: ConvertFolderOptions) dirPath =
@@ -48,11 +49,19 @@ let convertFolderToWebp (options: ConvertFolderOptions) dirPath =
         |> Array.filter (fun path ->
             options.Formats path.Extension
         )
+
+    let outputDirectory =
+        match options.OutputDirectory with
+        | None -> dirPath
+        | Some output ->
+            Directory.CreateDirectory output |> ignore
+            output
+
     files
     |> Array.iter (fun file ->
         let srcPath = file.FullName
         let dstPath =
-            file.DirectoryName </> $"{Path.GetFileNameWithoutExtension srcPath}.webp"
+            outputDirectory </> $"{Path.GetFileNameWithoutExtension srcPath}.webp"
         let command =
             String.concat " " [
                 $"\"%s{srcPath}\""
