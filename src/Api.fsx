@@ -37,6 +37,10 @@ let size (image: string) =
 type ConvertFolderOptions = {
     FitSize: Size option
     Dry: bool
+    /// `80` для webp по умолчанию. Узнал опытным путем
+    ///
+    /// https://imagemagick.org/command-line-options/#quality
+    Quality: int option
     /// `(=) ".png"` for example
     InputFormats: string -> bool
     OutputDirectory: string option
@@ -66,6 +70,7 @@ let convertFolder (options: ConvertFolderOptions) dirPath =
         let command =
             String.concat " " [
                 $"\"%s{srcPath}\""
+
                 match options.FitSize with
                 | Some fitSize ->
                     let imageSize =
@@ -77,6 +82,12 @@ let convertFolder (options: ConvertFolderOptions) dirPath =
                             imageSize * fitScale fitSize imageSize
                     $"-resize %d{imageSize.Width}x{imageSize.Height}!"
                 | None -> ()
+
+                match options.Quality with
+                | None -> ()
+                | Some quality ->
+                    $"-quality %d{quality}"
+
                 $"\"%s{dstPath}\""
             ]
         printfn $"%s{convertPath} %s{command}"
