@@ -37,11 +37,17 @@ let size (image: string) =
 type ConvertFolderOptions = {
     FitSize: Size option
     Dry: bool
+    /// `(=) ".png"` for example
+    Formats: string -> bool
 }
 
 let convertFolderToWebp (options: ConvertFolderOptions) dirPath =
     let dir = DirectoryInfo dirPath
-    let files = dir.GetFiles "*.png"
+    let files =
+        dir.GetFiles "*.*"
+        |> Array.filter (fun path ->
+            options.Formats path.Extension
+        )
     files
     |> Array.iter (fun file ->
         let srcPath = file.FullName
